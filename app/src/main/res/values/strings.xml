@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SmartLocker</string>
+    <string name="format_label">%d.%s</string>
+</resources>
