@@ -1,4 +1,4 @@
-package com.intel.smartlockers;
+package com.intel.smartlockers.modal;
 
 public class GroupEmployees {
     private int groupemployeeId;

@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">SmartLocker</string>
     <string name="format_label">%d.%s</string>
+
+    <string name="text_demo">Text demo</string>
+    <string name="vanban_demo">Đây là một đoạn văn bản rất hay ho và có nhiều điều thú vị do thinhdev viết ra để test mức độ hiển thị activity</string>
+    <string name="vanbandai_demo">Đây là một đoạn văn bản rất dài, rất rất dài, hay ho và có nhiều điều thú vị do thinhdev viết ra để test xem mức độ hiển thị nội dung trong activity có trơn tru và mượt mà như ý định. nếu không trơn chu thì cố mà sửa lại cho đúng nhé</string>
+
+
+    <!--    navi menu-->
+    <string name="menu_home">Trang chính</string>
+    <string name="menu_history">Nhật ký</string>
 </resources>
