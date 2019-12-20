@@ -1,30 +1,31 @@
 package com.intel.smartlockers.modal;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 
 import java.util.ArrayList;
 
-public class LockerGroups {
+public class EmployeeGroup {
     private int ID;
     private String name;
     private String description;
-    private ArrayList<Lockers> lockers = new ArrayList<Lockers>();
+    private ArrayList<Employee> employees = new ArrayList<Employee>();
 
-    public LockerGroups() {
+    public EmployeeGroup() {
     }
 
-    public LockerGroups(Cursor cursor) {
+    public EmployeeGroup(Cursor cursor) {
         try {
             this.ID = cursor.getInt(0);
             this.name = cursor.getString(1);
             this.description = cursor.getString(2);
         }catch (Exception e){
-            Log.w("TAG_LOG", "Convert DB to LockerGroups error");
+            Log.w("TAG_LOG", "Convert DB to EmployeeGroups error");
         }
     }
 
-    public LockerGroups(int ID, String name, String description) {
+    public EmployeeGroup(int ID, String name, String description) {
         this.ID = ID;
         this.name = name;
         this.description = description;
@@ -54,20 +55,25 @@ public class LockerGroups {
         this.description = description;
     }
 
-    public ArrayList<Lockers> getLockers() {
-        return lockers;
+    public ArrayList<Employee> getLockers() {
+        return employees;
     }
 
-    public void setLockers(ArrayList<Lockers> lockers) {
-        this.lockers = lockers;
+    public ContentValues getValues(){
+        ContentValues values = new ContentValues();
+        values.put("name", this.name);
+        values.put("description", this.description);
+        return values;
     }
+
 
     @Override
     public String toString() {
-        return "LockerGroups{" +
+        return "EmployeeGroups{" +
                 "ID=" + ID +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", employees=" + employees +
                 '}';
     }
 
@@ -78,4 +84,6 @@ public class LockerGroups {
     public boolean deleteInDataBase(){
         return false;
     }
+
+
 }

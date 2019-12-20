@@ -14,16 +14,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.intel.smartlockers.R;
-import com.intel.smartlockers.modal.LockerGroups;
+import com.intel.smartlockers.modal.LockerGroup;
 
 import java.util.ArrayList;
 
 public class LockerGroupAdapter extends RecyclerView.Adapter<LockerGroupAdapter.MyViewHolder> {
-    private ArrayList<LockerGroups> listData;
+    private ArrayList<LockerGroup> listData;
     private LayoutInflater layoutInflater;
     private Context context;
 
-    public LockerGroupAdapter(Context context, ArrayList<LockerGroups> listData) {
+    public LockerGroupAdapter(Context context, ArrayList<LockerGroup> listData) {
         Log.w("TAG_LOG", "In LockerGroupAdapter" + listData.toString());
         this.listData = listData;
         this.context = context;
@@ -62,7 +62,7 @@ public class LockerGroupAdapter extends RecyclerView.Adapter<LockerGroupAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        LockerGroups lockerGroups = listData.get(position);
+        LockerGroup lockerGroups = listData.get(position);
 
         holder.txt_name.setText(lockerGroups.getName());
         holder.txt_description.setText(lockerGroups.getDescription());

@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,14 +18,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.intel.smartlockers.Adapter.LockerGroupAdapter;
 import com.intel.smartlockers.R;
 import com.intel.smartlockers.modal.BaseSQLite;
-import com.intel.smartlockers.modal.LockerGroups;
+import com.intel.smartlockers.modal.LockerGroup;
 import com.intel.smartlockers.modal.Lockers;
 
 import java.util.ArrayList;
 
 public class fragmentHome extends Fragment implements View.OnClickListener{
     BaseSQLite baseSQLite;
-    ArrayList<LockerGroups> lockerGroups = new ArrayList<LockerGroups>();
+    ArrayList<LockerGroup> lockerGroups = new ArrayList<LockerGroup>();
     ArrayList<Lockers> lockers = new ArrayList<Lockers>();
 
 
@@ -64,6 +63,7 @@ public class fragmentHome extends Fragment implements View.OnClickListener{
     private void bindView(View view) {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(mLayoutManager);
+
         LockerGroupAdapter lockerGroupAdapter = new LockerGroupAdapter(view.getContext(), lockerGroups);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(lockerGroupAdapter);

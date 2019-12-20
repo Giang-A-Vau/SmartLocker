@@ -4,23 +4,38 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.intel.smartlockers.fragment.fragmentHistory;
 import com.intel.smartlockers.fragment.fragmentHome;
 import com.intel.smartlockers.modal.BaseSQLite;
+import com.intel.smartlockers.modal.Employee;
+import com.intel.smartlockers.modal.History;
+import com.intel.smartlockers.modal.Lockers;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity{
     private BottomNavigationView navView;
-    private BaseSQLite baseSQLite;
-
+    public static BaseSQLite baseSQLite;
     public static boolean isOpenLooker = false;
     public static String codeRFID = ""; //Ma dung: 0610788460
+    public static Employee employeeIndex = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +43,8 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         baseSQLite = new BaseSQLite(this);
 
-//        baseSQLite.getReadableDatabase().isOpen();
-
         addControls();
         addEvents();
-
         changeFragment(new fragmentHome(baseSQLite));
     }
 
@@ -70,14 +82,93 @@ public class MainActivity extends AppCompatActivity{
             if(event.getKeyCode() != KeyEvent.KEYCODE_ENTER){
                 codeRFID += (char) event.getUnicodeChar();
             } else{
+                employeeIndex =  baseSQLite.getEmployee(codeRFID);
+                if(employeeIndex != null){
+                    Toast.makeText(this, employeeIndex.getName() + " - " + employeeIndex.getCode(), Toast.LENGTH_LONG).show();
 
-                Toast.makeText(this, codeRFID, Toast.LENGTH_SHORT).show();
-                isOpenLooker = true;
+                    ArrayList<History> histories = baseSQLite.getHistoryForEmployee(employeeIndex.getID());
+                    Log.w("TAG_HIS", histories.toString() + "");
+
+
+                    if(histories.size() != 0){
+                        Lockers lockers = baseSQLite.getLocker(histories.get(0).getLockerID());
+                        if(lockers != null && lockers.getStatus() == 1){
+                            openLocker(lockers);
+                        }else{
+                            isOpenLooker = true;
+                            Toast.makeText(this, "Hãy mở 1 tủ trống bất kỳ để đựng đồ", Toast.LENGTH_LONG).show();
+                            changeFragment(new fragmentHome(baseSQLite));
+                        }
+                    }else {
+                        isOpenLooker = true;
+                        Toast.makeText(this, "Hãy mở 1 tủ trống bất kỳ để đựng đồ", Toast.LENGTH_LONG).show();
+                        changeFragment(new fragmentHome(baseSQLite));
+                    }
+                }else{
+                    Toast.makeText(this, "Thẻ của bạn chưa được đăng ký", Toast.LENGTH_LONG).show();
+                }
+
                 codeRFID = "";
-                changeFragment(new fragmentHome(baseSQLite));
             }
         }
         return  false;
+    }
+
+    private void openLocker(final Lockers lockers) {
+        Log.w("TAG_LOG", lockers.toString());
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final LayoutInflater inflater = this.getLayoutInflater();
+        final View view = inflater.inflate(R.layout.layout_dialog_locker, null);
+        builder.setView(view);
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+
+        ((TextView) view.findViewById(R.id.txt_info_locker_name)).setText("THÔNG TIN TỦ: " + lockers.getName());
+        ((EditText) view.findViewById(R.id.edit_info_locker_data)).setText(lockers.getData());
+        ((Button) view.findViewById(R.id.btn_info_looker_done)).setText("Đóng tủ");
+        ((Button) view.findViewById(R.id.btn_info_locker_back)).setText("Trả tủ");
+
+        final EditText edit_data = view.findViewById(R.id.edit_info_locker_data);
+
+
+        view.findViewById(R.id.btn_info_locker_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                MainActivity.isOpenLooker = false;
+                lockers.setStatus(0);
+                if(baseSQLite.updateLocker(lockers)){
+                    baseSQLite.createHistory(new History(1,
+                            lockers.getID(), MainActivity.employeeIndex.getID(),
+                            new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date()), 1));
+
+                    Toast.makeText(view.getContext(), "Trả tủ thành công", Toast.LENGTH_LONG).show();
+                    changeFragment(new fragmentHome(baseSQLite));
+                }else {
+                    Toast.makeText(view.getContext(), "Trả tủ thất bại", Toast.LENGTH_LONG).show();
+                }
+
+                alertDialog.dismiss();
+            }
+        });
+
+        view.findViewById(R.id.btn_info_looker_done).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                MainActivity.isOpenLooker = false;
+
+                baseSQLite.createHistory(new History(1,
+                        lockers.getID(), MainActivity.employeeIndex.getID(),
+                        new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date()), 2));
+
+                lockers.setData(edit_data.getText().toString());
+                baseSQLite.updateLocker(lockers);
+                alertDialog.dismiss();
+            }
+        });
     }
 }
 

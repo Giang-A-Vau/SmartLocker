@@ -1,5 +1,6 @@
 package com.intel.smartlockers.modal;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 
@@ -82,5 +83,14 @@ public class Lockers {
                 ", data='" + data + '\'' +
                 ", status=" + status +
                 '}';
+    }
+
+    public ContentValues getValues(){
+        ContentValues values = new ContentValues();
+        values.put("groupLockerID", this.groupLockerID);
+        values.put("name", this.name);
+        values.put("data", this.data);
+        values.put("status", this.status);
+        return values;
     }
 }
