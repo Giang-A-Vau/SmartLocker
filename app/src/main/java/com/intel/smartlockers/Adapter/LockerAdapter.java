@@ -79,27 +79,31 @@ public class LockerAdapter extends RecyclerView.Adapter<LockerAdapter.MyViewHold
                 ((Button) view.findViewById(R.id.btn_info_looker_done)).setText("Nhận tủ");
                 final EditText edit_data = view.findViewById(R.id.edit_info_locker_data);
 
+                //Khi click vào nút Trở lại
                 view.findViewById(R.id.btn_info_locker_back).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View view) {
-                        MainActivity.isOpenLooker = false;
+                        MainActivity.isOpenLooker = false;//Khóa người dùng không cho phép mở những tủ khác
                         alertDialog.dismiss();
                     }
                 });
 
+                //Khi click vào nút Nhận tủ
                 view.findViewById(R.id.btn_info_looker_done).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View view) {
                         lockers.setStatus(1);
                         lockers.setData(edit_data.getText().toString());
 
-                         notifyDataSetChanged();
+                        notifyDataSetChanged();//Cập nhật lại giao diện
 
-                        MainActivity.isOpenLooker = false;
+                        MainActivity.isOpenLooker = false;//Khóa người dùng không cho phép mở những tủ khác
+                        //Tạo mới lịch sử
                         MainActivity.baseSQLite.createHistory(new History(1,
                                 lockers.getID(), MainActivity.employeeIndex.getID(),
                                 new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date()), 0));
 
+                        //Cập nhật lại trạng thái tủ
                         if(MainActivity.baseSQLite.updateLocker(lockers)){
                             Toast.makeText(view.getContext(), "Thành công", Toast.LENGTH_SHORT).show();
                         }else {
